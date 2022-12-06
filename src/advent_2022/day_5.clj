@@ -5,7 +5,7 @@
   "Given a stack index and the relevant input text, build a stack of crates (a Clojure list)"
   [i stack-lines]
   (letfn [(agg [crate-stack line]
-            (let [v (subs line (+ 1 (* 4 i)) (+ 2 (* 4 i)))]
+            (let [v (subs line (inc (* 4 i)) (+ 2 (* 4 i)))]
               (if (= " " v)
                 crate-stack
                 (conj crate-stack v))))]
@@ -16,9 +16,9 @@
   [file-name]
   (let [lines (str/split (slurp file-name) #"\n")
         sep-line (.indexOf lines "")
-        move-lines (vec (subvec lines (+ sep-line 1) (count lines)))
-        stack-lines (vec (subvec lines 0 (- sep-line 1))) ;; only the lines with crates
-        stack-count (+ 1 (quot (count (nth lines 0)) 4))
+        move-lines (vec (subvec lines (inc sep-line) (count lines)))
+        stack-lines (vec (subvec lines 0 (dec sep-line))) ;; only the lines with crates
+        stack-count (inc (quot (count (nth lines 0)) 4))
         stacks (vec (map (fn [i] (build-stack i stack-lines)) (range stack-count)))]
     {:move-lines move-lines, :stacks stacks}))
 
@@ -32,7 +32,7 @@
             stacks (-> stacks
                        (assoc to-stack (conj (nth stacks to-stack) moved))
                        (assoc from-stack (pop (nth stacks from-stack))))]
-        (recur (- move-count 1) stacks)))))
+        (recur (dec move-count) stacks)))))
 
 (defn move-bulk
   "Given a step of the move procedure, update the stacks by pushing and popping all moving crates at once. A move strategy"
@@ -52,15 +52,15 @@
       (let [move-line (first move-lines)
             parts (map #(Integer/parseInt %) (rest (re-find #"move (\d+) from (\d+) to (\d+)" move-line)))
             move-data {:move-count (first parts)
-                       :from-stack (- (second parts) 1) ;; 0 indexed
-                       :to-stack (- (nth parts 2) 1)}   ;; 0 indexed
+                       :from-stack (dec (second parts)) ;; 0 indexed
+                       :to-stack (dec (nth parts 2))}   ;; 0 indexed
             stacks (move-strategy stacks move-data)]
         (recur (rest move-lines) stacks)))))
 
 (defn top-crates
   "return the top crate from each stack as a string"
   [stacks]
-  (str/join "" (map (fn [stack] (first stack)) stacks)))
+  (str/join "" (map first stacks)))
 
 (defn -main [& args]
   (when (not= (count args) 1)

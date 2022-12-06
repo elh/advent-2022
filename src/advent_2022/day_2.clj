@@ -27,18 +27,18 @@
   "returns a new round with an updated :mine based on the :mineStrategy and :theirs"
   [round]
   (let [new-mine (case (:mineStrategy round)
-                   "lose" (mod (- (:theirs round) 1) 3)
+                   "lose" (mod (dec (:theirs round)) 3)
                    "draw" (:theirs round)
-                   "win" (mod (+ (:theirs round) 1) 3))]
+                   "win" (mod (inc (:theirs round)) 3))]
     (assoc round :mine new-mine)))
 
 (defn score-round
   "returns a score incorporating the points from your hand and the result of the RPS round"
   [round]
   (+
-   (+ 1 (:mine round))                                      ;; points for your hand
+   (inc (:mine round))                                      ;; points for your hand
    (cond (= (:theirs round) (:mine round)) 3                ;; draw
-         (= (mod (+ 1 (:theirs round)) 3) (:mine round)) 6  ;; win
+         (= (mod (inc (:theirs round)) 3) (:mine round)) 6  ;; win
          :else 0)))                                         ;; loss
 
 (defn -main [& args]

@@ -1,7 +1,7 @@
 (ns advent-2022.day-6
   (:require [clojure.string :as str]))
 
-(defn first-n-unique 
+(defn first-n-unique
   "Return number of chars read before we see first sliding window of n unique chars."
   [n line]
   (loop [i 0]
