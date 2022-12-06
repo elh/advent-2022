@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defn first-n-unique
-  "Return number of chars read before we see first sliding window of n unique chars."
+  "Returns number of chars read before we see first sliding window of n unique chars."
   [n line]
   (loop [i 0]
     (if (= n (count (distinct (subs line i (+ i n)))))

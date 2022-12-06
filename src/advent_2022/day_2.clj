@@ -6,7 +6,7 @@
   (vec (map str/trim-newline (str/split (slurp file-name) #"\n"))))
 
 (defn parse-line
-  "returns a tuple that represents the hands thrown"
+  "Returns a tuple that represents the hands thrown."
   [line]
   (let [parts (str/split line #"\s+")
         theirsNum (case (first parts)
@@ -24,7 +24,7 @@
     {:theirs theirsNum, :mine mineNum, :mineStrategy mineStrategy}))
 
 (defn adjust-for-strategy
-  "returns a new round with an updated :mine based on the :mineStrategy and :theirs"
+  "Returns a new round with an updated :mine based on the :mineStrategy and :theirs."
   [round]
   (let [new-mine (case (:mineStrategy round)
                    "lose" (mod (dec (:theirs round)) 3)
@@ -33,7 +33,7 @@
     (assoc round :mine new-mine)))
 
 (defn score-round
-  "returns a score incorporating the points from your hand and the result of the RPS round"
+  "Returns a score incorporating the points from your hand and the result of the RPS round."
   [round]
   (+
    (inc (:mine round))                                      ;; points for your hand

@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defn build-stack
-  "Given a stack index and the relevant input text, build a stack of crates (a Clojure list)"
+  "Given a stack index and the relevant input text, builds a stack of crates (a Clojure list)."
   [i stack-lines]
   (letfn [(agg [crate-stack line]
             (let [v (subs line (inc (* 4 i)) (+ 2 (* 4 i)))]
@@ -12,7 +12,7 @@
     (reduce agg '() (reverse stack-lines)))) ;; reverse to load up the stacks from the bottom
 
 (defn read-input
-  "Read input and return a vector of crate stacks and a vector of move line strings"
+  "Reads input and returns a vector of crate stacks and a vector of move line strings."
   [file-name]
   (let [lines (str/split (slurp file-name) #"\n")
         sep-line (.indexOf lines "")
@@ -23,7 +23,8 @@
     {:move-lines move-lines, :stacks stacks}))
 
 (defn move-one-by-one
-  "Given a step of the move procedure, update the stacks by pushing and popping crates one by one. A move strategy"
+  "A move strategy.
+   Given a step of the move procedure, updates the stacks by pushing and popping crates one by one."
   [stacks {:keys [move-count from-stack to-stack]}]
   (loop [move-count move-count stacks stacks]
     (if (zero? move-count)
@@ -35,7 +36,8 @@
         (recur (dec move-count) stacks)))))
 
 (defn move-bulk
-  "Given a step of the move procedure, update the stacks by pushing and popping all moving crates at once. A move strategy"
+  "A move strategy.
+   Given a step of the move procedure, updates the stacks by pushing and popping all moving crates at once."
   [stacks {:keys [move-count from-stack to-stack]}]
   (let [moved (take move-count (nth stacks from-stack))
         stacks (-> stacks
@@ -44,7 +46,7 @@
     stacks))
 
 (defn make-moves
-  "Given a move strategy, apply it for all of the move steps in the input and return the final resulting stacks"
+  "Given a move strategy, applies it for all of the move steps in the input and returns the final resulting stacks."
   [move-strategy {:keys [move-lines stacks]}]
   (loop [move-lines move-lines stacks stacks]
     (if (empty? move-lines)
@@ -58,7 +60,7 @@
         (recur (rest move-lines) stacks)))))
 
 (defn top-crates
-  "return the top crate from each stack as a string"
+  "Returns the top crate from each stack as a string."
   [stacks]
   (str/join "" (map first stacks)))
 

@@ -7,14 +7,14 @@
   (vec (map str/trim-newline (str/split (slurp file-name) #"\n"))))
 
 (defn find-duplicate
-  "find duplicate letter across first and second halves of the line"
+  "Finds duplicate letter across first and second halves of the line."
   [line]
   (let [letters (str/split line #"")
         halves (split-at (quot (count letters) 2) letters)]
     (some (set (first halves)) (second halves))))
 
 (defn find-duplicate-across-lines
-  "find duplicate letter across 3 lines"
+  "Finds duplicate letter across 3 lines."
   [lines]
   (assert (= 3 (count lines)))
   (let [letters (map (fn [line] (str/split line #"")) lines)
