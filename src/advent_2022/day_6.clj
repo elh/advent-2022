@@ -9,14 +9,14 @@
       (+ i n)
       (recur (inc i)))))
 
-; naive recusive solution stack overflows. must use loop/recur or for recursion.
-(defn first-n-unique-recursion
-  "Returns number of chars read before we see first sliding window of n unique chars."
-  ([n line] (first-n-unique-recursion n line 0))
-  ([n line cur]
-   (if (= n (count (distinct (subs line cur (+ cur n)))))
-     (+ cur n)
-     (first-n-unique-recursion n line (inc cur)))))
+;; ;; naive recusive solution stack overflows. must use loop/recur or for recursion.
+;; (defn first-n-unique-recursion
+;;   "Returns number of chars read before we see first sliding window of n unique chars."
+;;   ([n line] (first-n-unique-recursion n line 0))
+;;   ([n line cur]
+;;    (if (= n (count (distinct (subs line cur (+ cur n)))))
+;;      (+ cur n)
+;;      (first-n-unique-recursion n line (inc cur)))))
 
 (defn -main [& args]
   (when (not= (count args) 1) (throw (Exception. "FAIL: expects input file as cmdline arg.")))
