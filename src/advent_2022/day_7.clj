@@ -6,9 +6,7 @@
   (vec (map str/trim-newline (str/split (slurp file-name) #"\n"))))
 
 (defn dir-name [cur child]
-  (if (= "/" cur)
-    (str "/" child)
-    (str cur "/" child)))
+  (if (= "/" cur) (str "/" child) (str cur "/" child)))
 
 (defn process-history
   "Parse lines into a map of dirs and their direct sizes and child dirs."
@@ -17,7 +15,7 @@
    (reduce (fn [acc line]
              (cond
                (str/starts-with? line "$ ls")
-               acc
+               acc ;; ignore
 
                (str/starts-with? line "$ cd ")
                (let [new-dir (str/replace-first line #"\$ cd " "")]
@@ -44,11 +42,7 @@
 (defn calculate-total-sizes
   "Return map of dirs with their total, indirect file sizes."
   [dirs]
-  (reduce (fn [acc dir]
-            (let [dir-name (first dir)]
-              (update-in acc [dir-name :total-size] (fn [_] (calculate-total-size dirs dir-name)))))
-          dirs
-          dirs))
+  (into {} (for [[k v] dirs] [k (assoc v :total-size (calculate-total-size dirs k))])))
 
 (defn find-smallest-dir-to-delete [dirs]
   (let [total-space 70000000
