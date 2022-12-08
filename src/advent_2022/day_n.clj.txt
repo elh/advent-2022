@@ -1,0 +1,12 @@
+(ns advent-2022.day-n
+  (:require [clojure.string :as str]))
+
+(defn read-input [file-name]
+  (vec (map str/trim-newline (str/split (slurp file-name) #"\n"))))
+
+(defn -main [& args]
+  (when (not= (count args) 1)
+    (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
+  (let [_ (read-input (first args))]
+    (println "part 1:" "TODO")
+    (println "part 2:" "TODO")))
