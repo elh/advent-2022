@@ -1,6 +1,6 @@
-# advent-2022
+# advent-2022 🎄
 
-My 2022 Advent of Code solutions in Clojure. 🎄
+Learning Clojure via 2022 Advent of Code.
 
 ## Usage
 ```
