@@ -13,7 +13,7 @@
          interesting 0]
     (let [cmd (first cmds)
           next {:t (inc (:t state)) :v (:v state)}
-          interesting (if (= 0 (mod (- (:t state) 20) 40))
+          interesting (if (zero? (mod (- (:t state) 20) 40))
                         (+ interesting (* (:t state) (:v state)))
                         interesting)]
       (if (nil? cmd)
