@@ -32,8 +32,8 @@
 (defn crt [data]
   (let [pixels (map (fn [v]
                       (if (<= (dec (:v v)) (mod (dec (:t v)) 40) (inc (:v v)))
-                        "#"
-                        ".")) data)]
+                        "█"
+                        " ")) data)]
        (str/join "\n" (map str/join (partition 40 pixels)))))
 
 (defn -main [& args]
