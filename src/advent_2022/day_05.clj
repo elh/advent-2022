@@ -1,4 +1,4 @@
-(ns advent-2022.day-5
+(ns advent-2022.day-05
   (:require [clojure.string :as str]))
 
 (defn build-stack

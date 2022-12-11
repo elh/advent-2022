@@ -1,4 +1,4 @@
-(ns advent-2022.day-6
+(ns advent-2022.day-06
   (:require [clojure.string :as str]))
 
 (defn first-n-unique

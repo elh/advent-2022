@@ -1,4 +1,4 @@
-(ns advent-2022.day-4
+(ns advent-2022.day-04
   (:require [clojure.string :as str]))
 
 (defn read-input
