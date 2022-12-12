@@ -3,17 +3,17 @@
 
 ;; note: i couldn't figure out the clojure way of creating a function at runtime that takes arguments.
 ;; the issue is that evaluated forms are not in the lexical scope of the eval.
-(defn eval-op [op old]
-  (let [parts (str/split op #" ")
-        body (list
-              (symbol (second parts))
-              (if (= "old" (first parts))
-                old
-                (Integer/parseInt (first parts)))
-              (if (= "old" (nth parts 2))
-                old
-                (Integer/parseInt (nth parts 2))))]
-    (eval body)))
+(def eval-op (memoize (fn [op old]
+                        (let [parts (str/split op #" ")
+                              body (list
+                                    (symbol (second parts))
+                                    (if (= "old" (first parts))
+                                      old
+                                      (Integer/parseInt (first parts)))
+                                    (if (= "old" (nth parts 2))
+                                      old
+                                      (Integer/parseInt (nth parts 2))))]
+                          (eval body)))))
 
 (defn parse-monkeys [file-name]
   (mapv (fn [m]
@@ -26,38 +26,41 @@
            {:items items, :op op, :divisor divisor, :if-true if-true, :if-false if-false, :inspected 0}))
        (str/split (slurp file-name) #"\n\n")))
 
-;; always inspects first item
-(defn inspect-item [monkeys m-idx]
+(defn inspect-item [monkeys m-idx reduce-fn]
   (let [m (nth monkeys m-idx)
         item (first (:items m))
-        new-worry (quot (eval-op (:op m) item) 3)
+        new-worry (reduce-fn (eval-op (:op m) item))
         test-result (zero? (mod new-worry (:divisor m)))
-        move-idx (if test-result (:if-true m) (:if-false m))] 
+        move-idx (if test-result (:if-true m) (:if-false m))]
     (as-> monkeys ms
       (update-in ms [m-idx :items] (comp vec rest))
       (update-in ms [move-idx :items] conj new-worry)
       (update-in ms [m-idx :inspected] inc))))
 
-(defn turn [monkeys m-idx]
+(defn turn [monkeys m-idx reduce-fn]
   (loop [monkeys monkeys]
     (if (zero? (count (:items (nth monkeys m-idx))))
       monkeys
-      (recur (inspect-item monkeys m-idx)))))
+      (recur (inspect-item monkeys m-idx reduce-fn)))))
 
-(defn round [monkeys]
-  (reduce (fn [monkeys m-idx] (turn monkeys m-idx))
+(defn round [monkeys reduce-fn]
+  (reduce (fn [monkeys m-idx] (turn monkeys m-idx reduce-fn))
           monkeys
           (range (count monkeys))))
 
-(defn rounds [monkeys n]
+(defn rounds [monkeys n reduce-fn]
   (loop [monkeys monkeys n n]
     (if (zero? n)
       monkeys
-      (recur (round monkeys) (dec n)))))
+      (recur (round monkeys reduce-fn) (dec n)))))
+
+(defn relief [worry] (quot worry 3))
+
+(defn reduce-lcm [monkeys] (fn [worry] (mod worry (reduce * (map #(:divisor %) monkeys)))))
 
 (defn -main [& args]
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [monkeys (parse-monkeys (first args))]
-    (println "part 1:" (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 20))))))
-    (println "part 2:" "TODO")))
+    (time (println "part 1:" (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 20 relief)))))))
+    (time (println "part 2:" (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 10000 (reduce-lcm monkeys))))))))))
