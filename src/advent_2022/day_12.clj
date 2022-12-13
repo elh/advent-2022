@@ -24,11 +24,14 @@
                :when (= val value)]
            [y x])))
 
+(defn okay-step? [from to]
+  (or (>= from to) (<= (- to from) 1)))
+
 ;; assumes uniform distances between nodes.
-(defn bfs-grid [grid start end-value]
+(defn bfs-grid [grid start end-value okay-step-fn]
   (loop [dist {start 0} queue [start]]
     (cond
-      (empty? queue) nil
+      (empty? queue) "NOT FOUND"
       (= (get-in grid (first queue)) end-value) (get dist (first queue))
       :else (let [cur (first queue)
                   queue (vec (rest queue))
@@ -44,9 +47,7 @@
                                                              "S" 1
                                                              "E" 26
                                                              (get-in grid v)))]
-                                                   (or
-                                                    (>= (grid-value cur) (grid-value v))
-                                                    (<= (- (grid-value v) (grid-value cur)) 1))))))
+                                                   (okay-step-fn (grid-value cur) (grid-value v))))))
                   new-dist (into {} (map vector neighbors (vec (repeat (count neighbors) (+ cur-dist 1)))))
                   new-nodes (seq (set/difference (set (keys new-dist)) (set (keys dist)) (set queue)))
                   dist (merge-with min dist new-dist)
@@ -58,5 +59,5 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))
         grid (as-grid input)]
-    (println "part 1:" (time (bfs-grid grid (get-y-x grid "S") "E")))
-    (println "part 2:" "TODO")))
+    (println "part 1:" (time (bfs-grid grid (get-y-x grid "S") "E" okay-step?)))
+    (println "part 2:" (time (bfs-grid grid (get-y-x grid "E") 1 #(okay-step? %2 %1))))))
