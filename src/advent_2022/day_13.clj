@@ -53,5 +53,5 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))
         p2-input (conj (reduce concat input) decoder1 decoder2)]
-    (println "part 1:" (sum-right-indices input))
-    (println "part 2:" (distress-signal p2-input))))
+    (println "part 1:" (time (sum-right-indices input)))
+    (println "part 2:" (time (distress-signal p2-input)))))

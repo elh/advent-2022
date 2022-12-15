@@ -21,5 +21,5 @@
 (defn -main [& args]
   (when (not= (count args) 1) (throw (Exception. "FAIL: expects input file as cmdline arg.")))
   (let [input (str/trim-newline (slurp (first args)))]
-    (println "part 1:" (first-n-unique 4 input))
-    (println "part 2:" (first-n-unique 14 input))))
+    (println "part 1:" (time (first-n-unique 4 input)))
+    (println "part 2:" (time (first-n-unique 14 input)))))

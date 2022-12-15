@@ -69,5 +69,5 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
 
   (let [input (read-input (first args))]
-    (println "part 1:" (top-crates (make-moves move-one-by-one input)))
-    (println "part 2:" (top-crates (make-moves move-bulk input)))))
+    (println "part 1:" (time (top-crates (make-moves move-one-by-one input))))
+    (println "part 2:" (time (top-crates (make-moves move-bulk input))))))

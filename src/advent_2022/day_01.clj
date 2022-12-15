@@ -17,5 +17,5 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
 
   (let [input (read-input (first args))]
-    (println "part 1:" (apply max (elves input)))
-    (println "part 2:" (reduce + (take-last 3 (sort (elves input)))))))
+    (println "part 1:" (time (apply max (elves input))))
+    (println "part 2:" (time (reduce + (take-last 3 (sort (elves input))))))))

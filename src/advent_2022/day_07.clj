@@ -60,13 +60,13 @@
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))]
-    (println "part 1:" (reduce (fn [acc dir]
-                                 (if (< (:total-size (second dir)) 100000)
-                                   (+ acc (:total-size (second dir)))
-                                   acc))
-                               0
-                               (calculate-total-sizes (process-history input))))
-    (println "part 2:" (->> input
-                            process-history
-                            calculate-total-sizes
-                            find-smallest-dir-to-delete))))
+    (println "part 1:" (time (reduce (fn [acc dir]
+                                       (if (< (:total-size (second dir)) 100000)
+                                         (+ acc (:total-size (second dir)))
+                                         acc))
+                                     0
+                                     (calculate-total-sizes (process-history input)))))
+    (println "part 2:" (time (->> input
+                                  process-history
+                                  calculate-total-sizes
+                                  find-smallest-dir-to-delete)))))

@@ -61,5 +61,5 @@
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [monkeys (parse-monkeys (first args))]
-    (time (println "part 1:" (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 20 relief)))))))
-    (time (println "part 2:" (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 10000 (reduce-lcm monkeys))))))))))
+    (time (println "part 1:" (time (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 20 relief))))))))
+    (time (println "part 2:" (time (reduce * (take-last 2 (sort (map #(:inspected %) (rounds monkeys 10000 (reduce-lcm monkeys)))))))))))

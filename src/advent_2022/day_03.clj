@@ -33,12 +33,12 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
 
   (let [input (read-input (first args))]
-    (println "part 1:" (->> input
-                            (map find-duplicate)
-                            (map letter-priority)
-                            (reduce +)))
-    (println "part 2:" (->> input
-                            (partition 3)
-                            (map find-duplicate-across-lines)
-                            (map letter-priority)
-                            (reduce +)))))
+    (println "part 1:" (time (->> input
+                                  (map find-duplicate)
+                                  (map letter-priority)
+                                  (reduce +))))
+    (println "part 2:" (time (->> input
+                                  (partition 3)
+                                  (map find-duplicate-across-lines)
+                                  (map letter-priority)
+                                  (reduce +))))))

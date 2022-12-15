@@ -46,12 +46,12 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
 
   (let [input (read-input (first args))]
-    (println "part 1:" (->> input
-                            (map parse-line)
-                            (map score-round)
-                            (reduce +)))
-    (println "part 2:" (->> input
-                            (map parse-line)
-                            (map adjust-for-strategy)
-                            (map score-round)
-                            (reduce +)))))
+    (println "part 1:" (time (->> input
+                                  (map parse-line)
+                                  (map score-round)
+                                  (reduce +))))
+    (println "part 2:" (time (->> input
+                                  (map parse-line)
+                                  (map adjust-for-strategy)
+                                  (map score-round)
+                                  (reduce +))))))

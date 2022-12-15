@@ -38,5 +38,5 @@
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))]
-    (println "part 1:" (count (:tail-seen (move (expanded-input input) 2))))
-    (println "part 2:" (count (:tail-seen (move (expanded-input input) 10))))))
+    (println "part 1:" (time (count (:tail-seen (move (expanded-input input) 2)))))
+    (println "part 2:" (time (count (:tail-seen (move (expanded-input input) 10)))))))
