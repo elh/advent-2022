@@ -55,10 +55,35 @@
                           ranges)]
     (- range-sum (count beacon-pos-on-y))))
 
+;; sloppy
+(defn has-gap [ranges max-x]
+  (if (= (count ranges) 1)
+    false
+    (< (second (first ranges)) max-x)))
+
+(defn tuning-frequency [x y]
+  (+ (* 4000000 x) y))
+
+(defn find-distress-beacon [pairs max-x-y start-y]
+  (loop [y start-y]
+    (when (< max-x-y y)
+      (throw (Exception. (format "FAIL: could not find beacon in %d rows" max-x-y))))
+    (when (zero? (mod y 10000))
+      (println (format "checking row %d" y)))
+    (let [ranges (coverage-all pairs y)]
+      (if (has-gap ranges max-x-y)
+        (let [x (inc (second (first ranges)))]
+          (println (format "found beacon at %d, %d" x y))
+          (tuning-frequency x y))
+        (recur (inc y))))))
+
 (defn -main [& args]
-  (when (not= (count args) 2)
-    (throw (Exception. (format "FAIL: expects input file and `y` as cmdline args. got %d args" (count args)))))
+  (when (not= (count args) 4)
+    (throw (Exception.
+            (format "FAIL: expects input file, part 1 `y`, part 2 max-x-y, part 2 start-y as cmdline args. got %d args" (count args)))))
   (let [input (read-input (first args))
-        n (Integer/parseInt (second args))]
+        n (Integer/parseInt (second args))
+        max-x-y (Integer/parseInt (nth args 2))
+        start-y (Integer/parseInt (nth args 3))]
     (println "part 1:" (time (count-free-positions input n)))
-    (println "part 2:" (time "TODO"))))
+    (println "part 2:" (time (find-distress-beacon input max-x-y start-y)))))
