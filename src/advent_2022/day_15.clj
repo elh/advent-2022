@@ -20,12 +20,8 @@
 ;; else, returns nil
 (defn coverage [pair y]
   (let [y-diff (Math/abs (- (:sensor-y pair) y))]
-    (if (< (:manhattan pair) y-diff)
-      nil
-      (let [x_diff (- (:manhattan pair) y-diff)
-            x_start (- (:sensor-x pair) x_diff)
-            x_end (+ (:sensor-x pair) x_diff)]
-        [x_start x_end]))))
+    (when-not (< (:manhattan pair) y-diff)
+      (let [x_diff (- (:manhattan pair) y-diff) x_start (- (:sensor-x pair) x_diff) x_end (+ (:sensor-x pair) x_diff)] [x_start x_end]))))
 
 ;; represent as as non-overlapping ranges. also includes beacon and sensor positions
 (defn coverage-all [pairs y]
@@ -44,7 +40,7 @@
                     (conj (vec (butlast acc)) [(first last) (max (second r) (second last))])
                     (conj acc r)))))
             []
-            (sort-by first (into [] (concat all-ranges))))))
+            (sort-by first (vec (concat all-ranges))))))
 
 (defn count-free-positions [pairs y]
   (let [ranges (coverage-all pairs y)
