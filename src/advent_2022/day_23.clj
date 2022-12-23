@@ -18,7 +18,7 @@
                             (when (coords (map + elf-coord delta)) true))
                           all-surrounding-coords))))
 
-;; return coordinates the elf would like to to to in this round
+;; return coordinates the elf would like to go to in this round
 (defn propose-move [elf-coord coords dir-order]
   (if (or
        (not (has-neighbor elf-coord coords))
