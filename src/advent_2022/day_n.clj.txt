@@ -2,7 +2,8 @@
   (:require [clojure.string :as str]))
 
 (defn read-input [file-name]
-  (vec (map str/trim-newline (str/split (slurp file-name) #"\n"))))
+  (as-> (slurp file-name) v
+    (str/split v #"\n")))
 
 (defn -main [& args]
   (when (not= (count args) 1)
