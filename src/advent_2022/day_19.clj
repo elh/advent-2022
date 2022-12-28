@@ -100,13 +100,16 @@
         (println (:t cur) (:building cur))))
     (when-not (nil? (:prior cur)) (recur (:prior cur) cur))))
 
+(defn geode-count [max-t bp]
+  (let [{states :states state-count :n best :best} (time (run max-t bp))]
+    ;; (print-build-order best)
+    (println "id:" (:id bp) "max-t:" max-t "geodes:" (get-in best [:resources :geode] 0) "final round states:" (count (states max-t)) "total states:" state-count)
+    (get-in best [:resources :geode] 0)))
+
 (defn quality-level [bp]
   (let [max-t 24
-        id (:id bp)
-        {states :states state-count :n best :best} (time (run max-t bp))]
-    ;; (print-build-order best)
-    (println "id:" id "max-t:" max-t "geodes:" (get-in best [:resources :geode] 0) "final round states:" (count (states max-t)) "total states:" state-count)
-    (* id (get-in best [:resources :geode] 0))))
+        geodes (geode-count max-t bp)]
+    (* (:id bp) geodes)))
 
 (defn quality-levels [bps]
   (reduce + (map quality-level bps)))
@@ -116,4 +119,4 @@
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))]
     (println "part 1:" (time (quality-levels input)))
-    (println "part 2:" (time "TODO"))))
+    (println "part 2:" (time (reduce * (map #(geode-count 32 %) (subvec input 0 (min 3 (count input)))))))))
