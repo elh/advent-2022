@@ -1,4 +1,4 @@
-.PHONY: run-example run target
+.PHONY: run-example run wc
 
 # NOTE: run-example and run are not general to all days anymore. some expect arguments
 
@@ -9,3 +9,6 @@ run-example:
 run:
 	@echo "Running day ${day}..."
 	@clj -M -m advent-2022.day-${day} inputs/${day}_input.txt
+
+wc:
+	@find src/advent_2022 -name '*.clj' | xargs wc
