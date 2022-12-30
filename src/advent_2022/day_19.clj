@@ -43,18 +43,22 @@
        (* t-left (get-in state [:robots :geode] 0))
        (/ (* t-left (dec t-left)) 2))))
 
+;; In my branch and bound approach, DFS is better probably because I have a very conservative bounding function
+(def new-stack [])
+(def new-queue  clojure.lang.PersistentQueue/EMPTY)
+
 (defn run [max-t blueprint]
-  (loop [states {0 (conj '() initial-state)} ;; all visited states keyed by round number
-         stack [initial-state]               ;; stack for DFC
-         best-so-far 0                       ;; most geodes we have seen so far
-         state-count 1]                      ;; total number of states visited
+  (loop [states {0 (conj '() initial-state)}     ;; all visited states keyed by round number
+         fringe (conj new-stack initial-state)   ;; stack for DFS (much faster than BFS in this impl)
+         best-so-far 0                           ;; most geodes we have seen so far
+         state-count 1]                          ;; total number of states visited
     (cond
-      (empty? stack) {:states states
-                      :best (reduce #(if (> (get-in %2 [:resources :geode]) (get-in %1 [:resources :geode] 0)) %2 %1) (states max-t))
-                      :n state-count}
+      (empty? fringe) {:states states
+                       :best (reduce #(if (> (get-in %2 [:resources :geode]) (get-in %1 [:resources :geode] 0)) %2 %1) (states max-t))
+                       :n state-count}
       ;; branch and bound based on best possible future geode count from the current state
-      (< (best-possible max-t (peek stack)) best-so-far) (recur states (pop stack) best-so-far (inc state-count))
-      :else (let [cur (peek stack)
+      (< (best-possible max-t (peek fringe)) best-so-far) (recur states (pop fringe) best-so-far (inc state-count))
+      :else (let [cur (peek fringe)
                   best-so-far (max best-so-far (get-in cur [:resources :geode] 0))
                   buildable (if (<= (- max-t (:t cur)) 1)
                               [] ;; do not build on second to last round
@@ -90,7 +94,7 @@
                                                  acc)))
                                            s buildable)
                                    s)))]
-              (recur (add-states states candidates) (vec (concat (pop stack) candidates)) best-so-far (inc state-count))))))
+              (recur (add-states states candidates) (reduce conj (pop fringe) candidates) best-so-far (inc state-count))))))
 
 (defn print-build-order [state]
   (loop [cur state prev nil]
