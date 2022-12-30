@@ -1,6 +1,6 @@
 (ns advent-2022.day-16
   (:require [clojure.string :as str]
-            [clojure.pprint :as pp]))
+            [clojure.set :as set]))
 
 (defn read-input [file-name]
   (as-> (slurp file-name) v
@@ -77,17 +77,46 @@
          (reduce conj (pop fringe) (filter #(< (:t %) max-t) children))
          (inc iterations))))))
 
+;; idea: the best plan for you and the elephant is the pair of plans that do not share any opened valves and sums to the
+;; most released pressure. the trick is that you and the elephant are working independently and there is no state
+;; dependency between the two.
+;;
+;; this is very inefficient but benefits from not rewriting any of the logic for generating final states in p1!
+;; (TODO: do a more efficient sorted merge approach to finding the best valid pairing)
+(defn best-valve-combos [max-t-states]
+  (let [best (reduce (fn [acc v]
+                       (if (or
+                            (and
+                             (contains? acc (:opened-valves v))
+                             (> (acc (:opened-valves v)) (:released v)))
+                            (zero? (:released v)))
+                         acc
+                         (assoc acc (:opened-valves v) (:released v))))
+                     {} max-t-states)
+        combos (->> (for [a best
+                          b best]
+                      (when (and (not= a b) (empty? (set/intersection (first a) (first b))))
+                        (+ (second a) (second b))))
+                    (filterv #(not (nil? %))))]
+    (last (sort combos))))
+
 (defn -main [& args]
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))
         config (with-distances input)]
-    (let [round-count 30
-          p1 (time (run config round-count))]
-      (println "part 1:"
-               (get-in p1 [:best :released])
-               (format "(%s iterations)" (get-in p1 [:iterations]))
-               (format "(%s max-t states)" (count (get-in p1 [:states round-count]))))
-      (println "best")
-      (pp/pprint (:best p1)))
-    (println "part 2:" (time "TODO"))))
+    (time (let [round-count 30
+                p1 (run config round-count)]
+            (println "part 1:"
+                     (get-in p1 [:best :released])
+                     (format "(%s iterations)" (get-in p1 [:iterations]))
+                     (format "(%s max-t states)" (count (get-in p1 [:states round-count]))))))
+      ;; (println "best")
+      ;; (pp/pprint (:best p1)))
+
+    (time (let [round-count 26
+                p2 (run config round-count)]
+            (println "part 2:"
+                     (best-valve-combos ((:states p2) round-count))
+                     (format "(%s iterations)" (get-in p2 [:iterations]))
+                     (format "(%s max-t states)" (count (get-in p2 [:states round-count]))))))))
