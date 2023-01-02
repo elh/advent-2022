@@ -2,7 +2,7 @@
 
 Learning Clojure via 2022 Advent of Code.
 
-44 🌟
+45 🌟
 
 ## Usage
 ```
