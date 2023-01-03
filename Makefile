@@ -1,4 +1,4 @@
-.PHONY: run-example run test wc
+.PHONY: run-example run test lint wc
 
 # NOTE: run-example and run are not general to all days anymore. some expect arguments
 
@@ -12,6 +12,9 @@ run:
 
 test:
 	@clj -X:test
+
+lint:
+	@clj -M:lint
 
 wc:
 	@find -s src/advent_2022 -name 'day_[[:digit:]][[:digit:]].clj' | xargs wc

@@ -1,7 +1,6 @@
 (ns advent-2022.day-22
   (:require [clojure.string :as str]
-            [clojure.set :as set]
-            [clojure.pprint :as pp]))
+            [clojure.set :as set]))
 
 (def verbose false)
 
