@@ -4,7 +4,7 @@
 (defn read-input [file-name]
   (map str/trim-newline (str/split (slurp file-name) #"\n")))
 
-;; every iteration ticks t++. it makes seeing states very easy)
+;; every iteration ticks t++. it makes iterating states very easy)
 ;; every command on the stack is either a noop, addx, or a number pushed by a preceding addx
 (defn run-cycles [cmds]
   (loop [state {:t 1 :v 1}

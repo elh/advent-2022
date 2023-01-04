@@ -38,7 +38,7 @@
        (<= (:min-z cube) (nth p 2) (:max-z cube))))
 
 (defn fill-cube
-  "returns a set of all points on the outside of the surface inside the bounding cube"
+  "Returns a set of all points on the outside of the surface inside the bounding cube"
   ([point-set bounding-cube] (let [start [(:min-x bounding-cube) (:min-y bounding-cube) (:min-z bounding-cube)]]
                                (fill-cube point-set bounding-cube [start] #{start})))
   ([point-set bounding-cube q seen] ;; when adding to the queue, immediately add it to seen to de-dup

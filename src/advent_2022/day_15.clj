@@ -5,7 +5,7 @@
   (+ (Math/abs (- (:sensor-x pair) (:beacon-x pair)))
      (Math/abs (- (:sensor-y pair) (:beacon-y pair)))))
 
-;; we'll call this output a "pair"
+;; we'll call the output "pair"s
 (defn read-input [file-name]
   (as-> (slurp file-name) v
     (str/split v #"\n")
@@ -16,14 +16,14 @@
                      :beacon-y (Integer/parseInt (nth parts 3))})) v)
     (mapv #(assoc % :manhattan (manhattan %)) v)))
 
-;; if overlaps, returns a range as a tuple of x_start, x_end on the y row
+;; if overlap, returns a range as a tuple of x_start, x_end on the y row
 ;; else, returns nil
 (defn coverage [pair y]
   (let [y-diff (Math/abs (- (:sensor-y pair) y))]
     (when-not (< (:manhattan pair) y-diff)
       (let [x_diff (- (:manhattan pair) y-diff) x_start (- (:sensor-x pair) x_diff) x_end (+ (:sensor-x pair) x_diff)] [x_start x_end]))))
 
-;; represent as as non-overlapping ranges. also includes beacon and sensor positions
+;; represent as non-overlapping ranges. also includes beacon and sensor positions
 (defn coverage-all [pairs y]
   (let [all-ranges (reduce (fn [acc p]
                              (let [c (coverage p y)]

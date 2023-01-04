@@ -1,6 +1,6 @@
 .PHONY: run-example run test lint wc
 
-# NOTE: run-example and run are not general to all days anymore. some expect arguments
+# NOTE: run-example and run are not general to all days anymore. a few expect arguments
 
 run-example:
 	@echo "Running day ${day} example..."

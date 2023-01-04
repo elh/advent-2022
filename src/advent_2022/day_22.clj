@@ -35,7 +35,7 @@
           [y x]
           (recur y (inc x)))))))
 
-;; first one is facing right. rotating to the clockwise (R)
+;; first one is facing right
 ;; rotating R will be +1 to the key, L is -1
 (def dirs {0 [0 1] 1 [1 0] 2 [0 -1] 3 [-1 0]})
 (def dirs-pw-values (set/map-invert dirs))
@@ -56,7 +56,7 @@
     (/ v 6)
     (int (Math/sqrt v))))
 
-;; from is a boolean if this is the from edge
+;; from is a boolean. true -> from edge, false -> to edge
 (defn edge [board hexamino-edge from]
   (let [square-len (square-length board)
         corner (mapv * [square-len square-len] (:square hexamino-edge))]

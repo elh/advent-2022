@@ -27,16 +27,17 @@
               :start [0 1]
               :end [(dec (count lines)) (- (count (first lines)) 2)]}
      :loc [0 1]
-     :blizzards blizzards}))
+     :blizzards blizzards
+     :t 0}))
 
-;; in bounds and not a wall
+;; in bounds and not on top of a wall
 (def free-loc? (memoize (fn [config loc]
-  (or (= loc (:start config))
-      (= loc (:end config))
-      (and (pos? (first loc))
-           (< (first loc) (dec (:height config)))
-           (pos? (second loc))
-           (< (second loc) (dec (:width config))))))))
+                          (or (= loc (:start config))
+                              (= loc (:end config))
+                              (and (pos? (first loc))
+                                   (< (first loc) (dec (:height config)))
+                                   (pos? (second loc))
+                                   (< (second loc) (dec (:width config))))))))
 
 (defn move-blizzard [config blizzard]
   (let [next-loc (mapv + (:dir blizzard) (:loc blizzard))
@@ -64,19 +65,19 @@
                                  blizzards
                                  (move-blizzards config (blizzards-at-t config blizzards (dec t)))))))
 
-(defn run [{config :config loc :loc blizzards :blizzards}]
-  (loop [fringe (conj clojure.lang.PersistentQueue/EMPTY {:t 0 :loc loc})
-         seen #{{:t 0 :loc loc}}
+(defn travel [{config :config loc :loc blizzards :blizzards t :t}]
+  (loop [fringe (conj clojure.lang.PersistentQueue/EMPTY {:t t :loc loc})
+         seen #{{:t t :loc loc}}
          iters 0]
     (if (empty? fringe)
-      (do (println "iters:" iters) nil)
+      (do (when verbose (println "iters:" iters)) nil)
       (let [{t :t
              loc :loc} (peek fringe)
             cur (peek fringe)
             next-blizzards (blizzards-at-t config blizzards (inc t))]
         (when verbose (pp/pprint cur))
         (if (= loc (:end config))
-          (do (println "iters:" iters) cur)
+          (do (when verbose (println "iters:" iters)) (:t cur))
           (if (and (pos? t-limit) (>= t t-limit))
             (recur (pop fringe) seen (inc iters))
             (let [next-locs (as-> moves vs
@@ -89,9 +90,25 @@
                   new-seen (reduce conj seen new-states)]
               (recur new-fringe new-seen (inc iters)))))))))
 
+(defn travel-twice [input]
+  (let [{config :config
+         blizzards :blizzards} input
+        there (travel input)
+        back (travel {:config (as-> config c
+                                (assoc c :start (:end config))
+                                (assoc c :end (:start config)))
+                      :loc (:end config)
+                      :blizzards blizzards
+                      :t there})
+        there-again (travel {:config config
+                             :loc (:start config)
+                             :blizzards blizzards
+                             :t back})]
+    there-again))
+
 (defn -main [& args]
   (when (not= (count args) 1)
     (throw (Exception. (format "FAIL: expects input file as cmdline arg. got %d args" (count args)))))
   (let [input (read-input (first args))]
-    (println "part 1:" (time (:t (run input))))
-    (println "part 2:" (time "TODO"))))
+    (println "part 1:" (time (travel input)))
+    (println "part 2:" (time (travel-twice input)))))

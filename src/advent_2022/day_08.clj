@@ -13,9 +13,9 @@
 (defn print-mat [m]
   (pp/cl-format *out* "~{~{~a~^\t~}~%~}" m))
 
-;; I first wrote this hard coding in a specific way of iterating through the matrix.
-;; When I sought to generalize, it might be simpler to rotate the entire matrix than to
-;; make iteration general.
+;; I first wrote this hard coding a specific way of iterating through the matrix.
+;; When I sought to generalize, I found it might be simpler to rotate the entire
+;; matrix than to make iteration generic
 (defn visible-left [m]
   (mapv (fn [row]
           (:row (reduce (fn [acc x]

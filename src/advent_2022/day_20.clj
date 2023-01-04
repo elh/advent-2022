@@ -14,8 +14,8 @@
 (defn mix-1 [data idx]
   (let [element (get-in data [idx])
         v (get-in data [idx :v])
-        ;; i don't understand the scheme at the edges as all but it doesn't matter as long as
-        ;; order the correct for the exercise. :shrug:
+        ;; i don't understand the scheme at the edges at all but it doesn't matter as long as
+        ;; order is correct for the exercise. :shrug:
         new-idx
         (cond
           (and (< v 0) (zero? (+ idx v))) (dec (count data))
