@@ -1,6 +1,6 @@
 # advent-2022 🎄
 
-![AoC Stars](https://img.shields.io/badge/47-%F0%9F%8C%9F-yellow)
+![AoC Stars](https://img.shields.io/badge/48-%F0%9F%8C%9F-yellow)
 
 Learning Clojure via 2022 Advent of Code.
 
